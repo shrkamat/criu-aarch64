@@ -5,3 +5,5 @@ criu/.source
 criu/.wget-hsts
 criu/download/
 criu/source/
+output/aarch64
+output/x64_64

@@ -26,4 +26,4 @@ USER $UNAME
 
 WORKDIR /home/skamath
 
-# ENTRYPOINT ./build.sh
+ENTRYPOINT ./build.sh

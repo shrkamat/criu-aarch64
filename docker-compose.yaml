@@ -4,6 +4,6 @@ services:
     build: .
     volumes:
     - $PWD/criu:/home/skamath
-    - $PWD/NDS:/NDS
+    - $PWD/output:/output
     stdin_open: true
     tty: true
