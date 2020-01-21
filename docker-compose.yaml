@@ -1,0 +1,10 @@
+version: '3'
+services:
+  criu_build_root:
+    build: .
+    volumes:
+    - $PWD/criu:/home/skamath
+    - $PWD/NDS:/NDS
+    - /opt/linaro_aarch64_linux-2014.09_r20170413:/opt/linaro_aarch64_linux-2014.09_r20170413
+    stdin_open: true
+    tty: true
