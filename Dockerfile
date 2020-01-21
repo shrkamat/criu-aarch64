@@ -1,12 +1,9 @@
 FROM ubuntu:18.04
 
 RUN true \
-  && dpkg --add-architecture i386 \
   && apt-get update \
   && apt-get install -y \
         build-essential \
-        gcc-multilib \
-        g++-multilib \
         git-core \
         pkg-config \
         flex \
@@ -14,8 +11,11 @@ RUN true \
         strace \
         wget \
         bison \
-        zlib1g-dev:i386
+        gcc-7-aarch64-linux-gnu \
+        g++-7-aarch64-linux-gnu
 
+
+RUN apt-get install -y gcc-aarch64-linux-gnu 
 # TODO: make user name dynamic $USERNAME should have worked but doesn't 
 ARG UNAME=skamath
 ARG UID=1000

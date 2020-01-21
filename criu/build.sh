@@ -1,9 +1,9 @@
 #!/bin/bash
-# set -xe
+set -x
 
 # toolchain
-/opt/linaro_aarch64_linux-2014.09_r20170413/bin/aarch64-linux-gnu-gcc --version
-export PATH=/opt/linaro_aarch64_linux-2014.09_r20170413/bin:$PATH
+# /opt/linaro_aarch64_linux-2014.09_r20170413/bin/aarch64-linux-gnu-gcc --version
+# export PATH=/opt/linaro_aarch64_linux-2014.09_r20170413/bin:$PATH
 
 # Configs
 ARCH=`uname -m`
@@ -101,6 +101,43 @@ if [ ! -f source/.libnl3 ]; then
     touch source/.libnl3
 fi
 
+# 06. build libaio
+if [ ! -f source/.libaio ]; then
+    cd source/libaio-*
+    ENABLE_SHARED=0 CC=$XHOST-gcc make -j4
+    ENABLE_SHARED=0 CC=$XHOST-gcc make prefix=$XPREFIX install
+    cd -
+    touch source/.libaio
+fi
+
+# libcap is a bit tricky
+# https://wiki.beyondlogic.org/index.php?title=Cross_Compiling_SystemD_for_ARM
+
+# 06. build libattr
+# TODO: this is poobably not required, re-confirm
+if [ ! -f source/.libattr ]; then
+    cd source/attr-*
+    ./configure --prefix=$XPREFIX --host=$XHOST --enable-shared=no --enable-gettext=no
+    make -j4
+    make install
+    cd -
+    touch source/.libattr
+fi
+
+# 06. build libcap
+# TODO: currently libcap is built independent of kernel headers
+#       it is wrong to do so & might fail badly in some circumstances 
+if [ ! -f source/.libcap ]; then
+    cd source/libcap-*
+    make prefix=$XPREFIX BUILD_CC=gcc CC=$XHOST-gcc LDFLAGS="-L$XPREFIX/lib" DYNAMIC=no PROGS=getpcaps LIBATTR=no install V=1
+    cd -
+    touch source/.libcap
+fi
+
+# exit 0
+
+# TODO: toolchain is not able to find pthread ?? 
+#       work around -L/usr/aarch64-linux-gnu/lib
 
 # 06. build criu
 if [ ! -f source/.criu ]; then
@@ -110,14 +147,14 @@ if [ ! -f source/.criu ]; then
     export PKG_CONFIG_PATH=$XPREFIX/lib/pkgconfig
     export ARCH=$XARCH
     export CROSS_COMPILE=$XHOST-
-    export USERCFLAGS="-I/NDS/$XARCH/include"
-    export CFLAGS=`pkg-config --cflags libprotobuf-c`
-    export LDFLAGS="`pkg-config --libs libprotobuf-c`"
+    export USERCFLAGS="-I/NDS/$XARCH/include -I/NDS/$XARCH/include/libnl3"
+    export CFLAGS=`-I/usr/aarch64-linux-gnu/include pkg-config --cflags libprotobuf-c`
+    export LDFLAGS="-L/NDS/$XARCH/lib64 `pkg-config --libs libprotobuf-c` -L/usr/aarch64-linux-gnu/lib -lpthread -lrt"
     make mrproper
     # make V=1 CC=$XHOST-gcc
-    # make V=1 CC=$XHOST-gcc -C test/zdtm
+    make V=1 CC=$XHOST-gcc -C test/zdtm
     cd -
-    # touch source/.protobuf_$ARCH
+    # touch source/.criu
 fi
 
 # exit 1

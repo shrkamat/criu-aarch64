@@ -3,3 +3,5 @@ http://download.openvz.org/criu/criu-3.12.tar.bz2
 https://github.com/protobuf-c/protobuf-c/releases/download/v1.3.2/protobuf-c-1.3.2.tar.gz
 https://github.com/libnet/libnet/releases/download/v1.2/libnet-1.2.tar.gz
 https://github.com/thom311/libnl/releases/download/libnl3_5_0/libnl-3.5.0.tar.gz
+http://ftp.de.debian.org/debian/pool/main/liba/libaio/libaio_0.3.112.orig.tar.xz
+https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.24.tar.xz
