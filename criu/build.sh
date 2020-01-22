@@ -1,5 +1,6 @@
 #!/bin/bash
-set -xe
+
+TOPDIR=$PWD
 
 # Configs
 ARCH=`uname -m`
@@ -109,9 +110,11 @@ fi
 if [ ! -f source/.criu ]; then
     cd source/criu-*
     export PKG_CONFIG_PATH=$XPREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
-    make mrproper
+    make clean
+    export CRIU_MAKE_OPTS="ARCH=$XARCH CROSS_COMPILE=/usr/bin/aarch64-linux-gnu- USERCFLAGS=\"-I$XPREFIX/include -I$XPREFIX/include/libnl3 -I/usr/aarch64-linux-gnu/include -L/usr/aarch64-linux-gnu/lib -L/$XPREFIX/lib64 -L/$XPREFIX/lib -lprotobuf-c -lpthread -lrt\""
     make ARCH=$XARCH CROSS_COMPILE=/usr/bin/aarch64-linux-gnu- USERCFLAGS="-I$XPREFIX/include -I$XPREFIX/include/libnl3 -I/usr/aarch64-linux-gnu/include -L/usr/aarch64-linux-gnu/lib -L/$XPREFIX/lib64 -L/$XPREFIX/lib -lprotobuf-c -lpthread -lrt" V=1
-    touch source/.criu
 fi
 
-echo "success"
+echo "CRIU build command used"
+echo "cd $TOPDIR/source/criu-3.12"
+echo "make $CRIU_MAKE_OPTS"

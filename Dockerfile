@@ -20,4 +20,4 @@ RUN apt-get install -y g++-aarch64-linux-gnu libprotobuf-dev libprotobuf-c0-dev 
 
 WORKDIR /opt/criu
 
-ENTRYPOINT ./build.sh
+# ENTRYPOINT ./build.sh
