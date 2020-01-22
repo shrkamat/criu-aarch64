@@ -3,7 +3,7 @@ services:
   criu_build_root:
     build: .
     volumes:
-    - $PWD/criu:/home/skamath
+    - $PWD/criu:/opt/criu
     - $PWD/output:/output
     stdin_open: true
     tty: true

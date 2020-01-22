@@ -1,0 +1,12 @@
+diff --git a/criu/Makefile.packages b/criu/Makefile.packages
+index b01b4b0..71eb173 100644
+--- a/criu/Makefile.packages
++++ b/criu/Makefile.packages
+@@ -48,6 +48,6 @@ check-packages-failed:
+ # Make sure all required libs are installed
+ PROGRAM_STUB := int main(int argc, char **argv) { return 0; }
+ check-packages:
+-	$(Q) $(call try-cc,$(PROGRAM_STUB),$(LIBS)) \
++	$(Q) $(call try-cc,$(PROGRAM_STUB),) \
+ 		|| $(MAKE) -f $(obj)/Makefile.packages check-packages-failed
+ .PHONY: check-packages-failed check-packages
