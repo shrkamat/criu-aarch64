@@ -11,12 +11,11 @@ RUN true \
         strace \
         wget \
         bison \
-        gcc-7-aarch64-linux-gnu \
-        g++-7-aarch64-linux-gnu
+        gcc-5-aarch64-linux-gnu \
+        g++-5-aarch64-linux-gnu
 
 
-RUN apt-get install -y gcc-aarch64-linux-gnu
-RUN apt-get install -y g++-aarch64-linux-gnu libprotobuf-dev libprotobuf-c0-dev protobuf-c-compiler protobuf-compiler python-protobuf 
+RUN apt-get install -y libprotobuf-dev libprotobuf-c0-dev protobuf-c-compiler protobuf-compiler python-protobuf 
 
 WORKDIR /opt/criu
 

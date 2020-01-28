@@ -34,7 +34,7 @@ if [ ! -f source/.protobuf_$XARCH ]; then
     pushd .
     cd source/protobuf-3.11.2
     mkdir -p build_$XARCH && cd build_$XARCH
-    ../configure --prefix=$XPREFIX --host=$XHOST --enable-shared=no
+    ../configure --prefix=$XPREFIX --host=$XHOST
     make -j4
     make install
     popd
@@ -46,7 +46,7 @@ if [ ! -f source/.protobuf-c_$XARCH ]; then
     pushd .
     cd source/protobuf-c-*
     mkdir -p build_$XARCH && cd build_$XARCH
-    PKG_CONFIG_PATH=$XPREFIX/lib/pkgconfig ../configure --host=$XHOST --prefix=$XPREFIX --enable-shared=no
+    PKG_CONFIG_PATH=$XPREFIX/lib/pkgconfig ../configure --host=$XHOST --prefix=$XPREFIX
     make -j4
     make install
     popd
@@ -99,7 +99,12 @@ fi
 # dont understand Makefile call try-cc, is try-cc really using crosstool ?
 # How can I make try-cc verbose ?
 if [ ! -f source/.criu_patched ]; then
-    patch -d source/criu-* -p1 < patches/Fix-CRIU-find-packages.patch
+    patch -d source/criu-* -p1 < patches/criu-success-v2.2.patch
+    # patch -d source/criu-* -p1 < patches/Fix-CRIU-find-packages.patch
+    # patch -d source/criu-* -p1 < patches/0001-criu-Change-libraries-install-directory.patch
+    # patch -d source/criu-* -p1 < patches/0001-criu-Fix-toolchain-hardcode.patch
+    # patch -d source/criu-* -p1 < patches/0002-criu-Skip-documentation-install.patch
+    # patch -d source/criu-* -p1 < patches/lib-Makefile-overwrite-install-lib-to-allow-multiarc.patch
     touch source/.criu_patched
 fi
 
@@ -111,8 +116,9 @@ if [ ! -f source/.criu ]; then
     cd source/criu-*
     export PKG_CONFIG_PATH=$XPREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
     make clean
-    export CRIU_MAKE_OPTS="ARCH=$XARCH CROSS_COMPILE=/usr/bin/aarch64-linux-gnu- USERCFLAGS=\"-I$XPREFIX/include -I$XPREFIX/include/libnl3 -I/usr/aarch64-linux-gnu/include -L/usr/aarch64-linux-gnu/lib -L/$XPREFIX/lib64 -L/$XPREFIX/lib -lprotobuf-c -lpthread -lrt\""
-    make ARCH=$XARCH CROSS_COMPILE=/usr/bin/aarch64-linux-gnu- USERCFLAGS="-I$XPREFIX/include -I$XPREFIX/include/libnl3 -I/usr/aarch64-linux-gnu/include -L/usr/aarch64-linux-gnu/lib -L/$XPREFIX/lib64 -L/$XPREFIX/lib -lprotobuf-c -lpthread -lrt" V=1
+    export ARCH=arm64
+    export WERROR=0 CRIU_MAKE_OPTS="ARCH=$XARCH CROSS_COMPILE=/usr/bin/aarch64-linux-gnu- USERCFLAGS=\"-I$XPREFIX/include -I$XPREFIX/include/libnl3 -I/usr/aarch64-linux-gnu/include -L/usr/aarch64-linux-gnu/lib -L/$XPREFIX/lib64 -L/$XPREFIX/lib -lprotobuf-c -lpthread -lrt\""
+    make WERROR=0 CROSS_COMPILE=/usr/bin/aarch64-linux-gnu- USERCFLAGS="-I$XPREFIX/include -I$XPREFIX/include/libnl3 -I/usr/aarch64-linux-gnu/include" LDFLAGS="-L/usr/aarch64-linux-gnu/lib -L/$XPREFIX/lib64 -L/$XPREFIX/lib -lprotobuf-c -lpthread -lrt" V=1
 fi
 
 echo "CRIU build command used"
