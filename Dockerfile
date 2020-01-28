@@ -17,6 +17,10 @@ RUN true \
 
 RUN apt-get install -y libprotobuf-dev libprotobuf-c0-dev protobuf-c-compiler protobuf-compiler python-protobuf 
 
+RUN ln -s /usr/bin/aarch64-linux-gnu-cpp-5 /usr/bin/aarch64-linux-gnu-cpp
+RUN ln -s /usr/bin/aarch64-linux-gnu-g++-5 /usr/bin/aarch64-linux-gnu-g++
+RUN ln -s /usr/bin/aarch64-linux-gnu-gcc-5 /usr/bin/aarch64-linux-gnu-gcc
+
 WORKDIR /opt/criu
 
 # ENTRYPOINT ./build.sh
