@@ -1,0 +1,50 @@
+diff --git a/criu/Makefile b/criu/Makefile
+index b696c635..4c94b964 100644
+--- a/criu/Makefile
++++ b/criu/Makefile
+@@ -59,7 +59,7 @@ ccflags-y		+= -I/usr/include/libnl3
+ 
+ export ccflags-y
+ 
+-LIBS			:= -lrt -lpthread -lprotobuf-c -ldl -lnl-3
++LIBS			:= $(LDFLAGS) -lrt -lpthread -lprotobuf-c -ldl -lnl-3
+ 
+ REQ-RPM-PKG-NAMES	+= protobuf
+ REQ-RPM-PKG-NAMES	+= protobuf-c
+@@ -87,10 +87,7 @@ REQ-DEV-PKG-TEST-NAMES  += libcap-dev
+ ifneq ($(MAKECMDGOALS),clean)
+ ifneq ($(MAKECMDGOALS),mrproper)
+         ifneq ($(shell sh -c                                                            \
+-                        'TMP="$(OUTPUT)$(TMPOUT).$$$$";                                 \
+-                        echo "int main(int argc, char *argv[]) { return 0; }" |         \
+-                        "$(CC)" -x c - $(LIBS) -o "$$TMP" > /dev/null 2>&1 && echo y;   \
+-                        rm -f "$$TMP"'),y)
++                        "echo y"),y)
+                 $(warning "Couldn't find some of the required libraries")
+                 $(warning "Make sure the following packages are installed")
+                 $(warning "RPM based distros: $(REQ-RPM-PKG-NAMES)")
+diff --git a/criu/arch/aarch64/include/asm/restorer.h b/criu/arch/aarch64/include/asm/restorer.h
+index b96f83b0..09bd0770 100644
+--- a/criu/arch/aarch64/include/asm/restorer.h
++++ b/criu/arch/aarch64/include/asm/restorer.h
+@@ -32,7 +32,7 @@ struct aux_context {
+ 
+ struct rt_sigframe {
+ 	siginfo_t info;
+-	struct ucontext uc;
++	struct ucontext_t uc;
+ 	u64 fp;
+ 	u64 lr;
+ };
+diff --git a/criu/cr-restore.c b/criu/cr-restore.c
+index e241c4e8..0225b5de 100644
+--- a/criu/cr-restore.c
++++ b/criu/cr-restore.c
+@@ -991,7 +991,6 @@ static void zombie_prepare_signals(void)
+ 		(1 << SIGPOLL)	|\
+ 		(1 << SIGIO)	|\
+ 		(1 << SIGSYS)	|\
+-		(1 << SIGUNUSED)|\
+ 		(1 << SIGSTKFLT)|\
+ 		(1 << SIGPWR)	 \
+ 	)

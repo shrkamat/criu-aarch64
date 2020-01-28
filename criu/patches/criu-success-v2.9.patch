@@ -1,0 +1,51 @@
+diff --git a/criu/Makefile.packages b/criu/Makefile.packages
+index b998da46..40ccc654 100644
+--- a/criu/Makefile.packages
++++ b/criu/Makefile.packages
+@@ -35,6 +35,6 @@ check-packages-failed:
+ # Make sure all required libs are installed
+ PROGRAM_STUB := int main(int argc, char **argv) { return 0; }
+ check-packages:
+-	$(Q) $(call try-cc,$(PROGRAM_STUB),$(LIBS)) \
++	$(Q) $(call try-cc,$(PROGRAM_STUB)) \
+ 		|| $(MAKE) -f $(obj)/Makefile.packages check-packages-failed
+ .PHONY: check-packages-failed check-packages
+diff --git a/criu/arch/aarch64/include/asm/sigframe.h b/criu/arch/aarch64/include/asm/sigframe.h
+index d428c290..0b02dfd4 100644
+--- a/criu/arch/aarch64/include/asm/sigframe.h
++++ b/criu/arch/aarch64/include/asm/sigframe.h
+@@ -27,7 +27,7 @@ struct aux_context {
+ 
+ struct rt_sigframe {
+ 	siginfo_t			info;
+-	struct ucontext			uc;
++	struct ucontext_t		uc;
+ 	uint64_t			fp;
+ 	uint64_t			lr;
+ };
+diff --git a/criu/cr-check.c b/criu/cr-check.c
+index f5d0d4ac..7c88a770 100644
+--- a/criu/cr-check.c
++++ b/criu/cr-check.c
+@@ -21,8 +21,8 @@
+ #include <netinet/in.h>
+ #include <sys/prctl.h>
+ #include <sched.h>
+-#include <linux/aio_abi.h>
+ #include <sys/mount.h>
++#include <linux/aio_abi.h>
+ 
+ #include "types.h"
+ #include "fdinfo.h"
+diff --git a/criu/cr-restore.c b/criu/cr-restore.c
+index 12f13aea..10f124f1 100644
+--- a/criu/cr-restore.c
++++ b/criu/cr-restore.c
+@@ -652,7 +652,6 @@ static void zombie_prepare_signals(void)
+ 		(1 << SIGPOLL)	|\
+ 		(1 << SIGIO)	|\
+ 		(1 << SIGSYS)	|\
+-		(1 << SIGUNUSED)|\
+ 		(1 << SIGSTKFLT)|\
+ 		(1 << SIGPWR)	 \
+ 	)
